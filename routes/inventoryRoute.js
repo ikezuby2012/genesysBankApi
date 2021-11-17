@@ -6,7 +6,7 @@ const {
 const { protect, restrictUser } = require("../controllers/authController");
 const router = express.Router();
 
-app.use(protect);
+router.use(protect);
 router.route("/")
     .get(getAllInventories)
  .post(restrictUser("user"), createInventory);

@@ -22,7 +22,7 @@ exports.signup = catchAsync(async (req, res, next) => {
         email: req.body.email,
         password: req.body.password,
         passwordConfirm: req.body.passwordConfirm,
-        // role: req.body.role,
+        role: req.body.role,
     });
 
     const token = signToken(newUser._id);
@@ -77,21 +77,38 @@ exports.logout = catchAsync(async (req, res, next) => {
 exports.protect = catchAsync(async (req, res, next) => {
     //getting the token and checking if it exist
     let token;
-    if (req.headers.authorization && req.headers.authorization.startWith("bearer")) {
+    if (req.headers.authorization && req.headers.authorization.startsWith("bearer")) {
         token = req.headers.authorization.split(" ")[1];
     } else if (req.cookies.jwt) {
         token = req.cookies.jwt;
     }
     if (!token) {
-        return next(new AppError("you are not logged In!, log in to gain access"))
+        return next(new AppError("you are not logged In!, log in to gain access", 403));
     }
 
+    // verify token
+    const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
+    //check if user exist
+    const freshUser = await User.findById(decoded.id);
+    if(!freshUser) {
+return next(new AppError("the user belonging to this token does not exist!", 403))
+    }
+    
+    //check if user changed password after the token was issued
+    if(freshUser.changePassword(decoded.iat)) {
+        return next(new AppError("user recently changed password, please log in again", 401))
+    }
+    req.user = freshUser;
+    next();
 });
 
 exports.restrictUser = (...roles) => (req, res, next) => {
-    if (!roles.includes(req.user.role)) {
-        return next(new AppError());
+    const {role} = req.user;
+    console.log(role);
+    if (roles.includes(req.user.role)) {
+        return next(new AppError("you don't have permission to perform this operation", 403));
     }
+    next();
 }
 
 exports.createAdminUser = catchAsync(async (req, res, next) => {
