@@ -1,7 +1,7 @@
 const Cart = require("../models/cartModel");
 const Inventory = require(`../models/inventoryModel`);
 const APIFeatures = require("../utils/apiFeatures");
-const AppError = require("../utils/appError");
+const AppError = require("../utils/AppError");
 const catchAsync = require("../utils/catchAsync");
 
 exports.addToCart = catchAsync(async (req, res, next) => {

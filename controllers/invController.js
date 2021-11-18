@@ -1,6 +1,6 @@
 const Inventory = require(`./../models/inventoryModel`);
 const APIFeatures = require("../utils/apiFeatures");
-const AppError = require("../utils/appError");
+const AppError = require("../utils/AppError");
 const catchAsync = require("../utils/catchAsync");
 
 exports.getAllInventories = catchAsync(async (req, res, next) => {
@@ -18,7 +18,7 @@ exports.createInventory = catchAsync(async (req, res, next) => {
     const newInventory = await Inventory.create(req.body);
 
     console.log("working");
-    
+
     res.status(201).json({
         status: "success",
         data: newInventory
