@@ -19,9 +19,7 @@ if (process.env.NODE_ENV === "development") {
     })
 } else {
     mongoose.connect(process.env.DATABASE_ATLAS, {
-        useNewUrlParser: true,
-        useCreateIndex: true,
-        useFindAndModify: true
+        useNewUrlParser: true, 
     }).then(() => {
         console.log(`database connected successfully`);
     })
