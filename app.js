@@ -11,7 +11,7 @@ const compression = require("compression");
 const userRouter = require("./routes/userRoute.js");
 const inventoryRoute = require("./routes/inventoryRoute");
 const errorHandler = require("./controllers/errorController");
-const cartRouter = require("./Routes/cartRoute");
+const cartRouter = require("./routes/cartRoute");
 
 const AppError = require("./utils/AppError");
 
