@@ -13,6 +13,7 @@ const inventoryRoute = require("./routes/inventoryRoute");
 const errorHandler = require("./controllers/errorController");
 const cartRouter = require("./Routes/cartRoute");
 
+const AppError = require("./utils/AppError");
 
 const app = express();
 //cors
