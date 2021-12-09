@@ -1,5 +1,5 @@
 const express = require("express");
-const { protect } = require("../controllers/authController");
+const { protect, restrictUser } = require("../controllers/authController");
 const {
     getAllTransactions, deposit, withdrawal, getTransaction, transfer, reverseTransfer
 } = require("../controllers/transactionController");
@@ -18,6 +18,6 @@ router.post("/withdrawal", withdrawal);
 router.post("/transfer/:id", transfer);
 
 //reverse transaction
-router.post("/reverse/:id", reverseTransfer);
+router.post("/reverse/:id", restrictUser("user"), reverseTransfer);
 
 module.exports = router;

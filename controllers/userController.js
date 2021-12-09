@@ -15,19 +15,20 @@ exports.getAllUsers = catchAsync(async (req, res, next) => {
 });
 
 exports.disableAccount = catchAsync(async (req, res, next) => {
-    await User.findByIdAndUpdate(req.user.id, { active: false });
+    await User.findByIdAndUpdate(req.params.id, { active: false });
+
 
     res.status(204).json({
-        status: "successful",
+        status: "success",
         data: null
     });
 });
 
 exports.deleteUser = catchAsync(async (req, res, next) => {
     await User.findByIdAndDelete(req.params.id);
-    
+
     res.status(204).json({
-        status: "successful",
+        status: "success",
         data: null
     })
 })
