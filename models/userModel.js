@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
 const bcrypt = require("bcryptjs");
-const crypto = require("crypto");
+
 
 const { Schema, model } = mongoose;
 
@@ -43,6 +43,24 @@ const UserSchema = new Schema({
         },
         default: "user"
     },
+    accountNumber: {
+        type: String,
+        unique: true
+    },
+    current_balance: {
+        type: Number,
+        min: [0, "quantity must not be less than 0"],
+        default: 0
+    },
+    active: {
+        type: Boolean,
+        default: true,
+        select: false
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now()
+    },
     passwordChangedAt: Date,
 }, {
     toJSON: { virtuals: true },
@@ -80,7 +98,5 @@ UserSchema.methods.changePassword = function (JWTTimestamp) {
     // false means not changed
     return false;
 };
-
-
 const User = model("User", UserSchema);
 module.exports = User;

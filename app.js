@@ -9,12 +9,10 @@ const compression = require("compression");
 
 //routes
 const userRouter = require("./routes/userRoute.js");
-const inventoryRoute = require("./routes/inventoryRoute");
+const transactionRouter = require("./routes/transactionRoute");
 const errorHandler = require("./controllers/errorController");
-const cartRouter = require("./routes/cartRoute");
 
 const AppError = require("./utils/AppError");
-
 const app = express();
 //cors
 app.use(cors());
@@ -46,8 +44,7 @@ app.use((req, res, next) => {
 });
 
 app.use("/api/v1/user", userRouter);
-app.use("/api/v1/inventory", inventoryRoute);
-app.use("/api/v1/cart", cartRouter);
+app.use("/api/v1/transaction", transactionRouter);
 
 //ping if api is working
 app.get("/", (req, res) => {

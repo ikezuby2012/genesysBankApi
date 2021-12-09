@@ -1,6 +1,7 @@
 const crypto = require("crypto");
 const { promisify } = require("util");
 const jwt = require("jsonwebtoken");
+const cryptoRandomString = require("crypto-random-string");
 
 const User = require("../models/userModel");
 
@@ -17,12 +18,17 @@ exports.signup = catchAsync(async (req, res, next) => {
     //we need to specify a special route for creating administrative user
     //to prevent malicious user from becoming admin
 
+    //assign every new User an account number
+    const number = cryptoRandomString({ length: 10, type: "numeric" });
+    const accountNumber = number.toString();
+
     const newUser = await User.create({
         name: req.body.name,
         email: req.body.email,
         password: req.body.password,
         passwordConfirm: req.body.passwordConfirm,
         role: req.body.role,
+        accountNumber
     });
 
     const token = signToken(newUser._id);
@@ -82,6 +88,7 @@ exports.protect = catchAsync(async (req, res, next) => {
     } else if (req.cookies.jwt) {
         token = req.cookies.jwt;
     }
+    console.log(token);
     if (!token) {
         return next(new AppError("you are not logged In!, log in to gain access", 403));
     }
@@ -90,20 +97,20 @@ exports.protect = catchAsync(async (req, res, next) => {
     const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
     //check if user exist
     const freshUser = await User.findById(decoded.id);
-    if(!freshUser) {
-return next(new AppError("the user belonging to this token does not exist!", 403))
+    if (!freshUser) {
+        return next(new AppError("the user belonging to this token does not exist!", 403))
     }
-    
-    //check if user changed password after the token was issued
-    if(freshUser.changePassword(decoded.iat)) {
-        return next(new AppError("user recently changed password, please log in again", 401))
-    }
+
+    // //check if user changed password after the token was issued
+    // if (freshUser.changePassword(decoded.iat)) {
+    //     return next(new AppError("user recently changed password, please log in again", 401))
+    // }
     req.user = freshUser;
     next();
 });
 
 exports.restrictUser = (...roles) => (req, res, next) => {
-    const {role} = req.user;
+    const { role } = req.user;
     console.log(role);
     if (roles.includes(req.user.role)) {
         return next(new AppError("you don't have permission to perform this operation", 403));
