@@ -1,15 +1,17 @@
 const express = require("express");
 const { protect, restrictUser } = require("../controllers/authController");
 const {
-    getAllTransactions, deposit, withdrawal, getTransaction, transfer, reverseTransfer
+    getAllTransactions, deposit, withdrawal, getTransaction, transfer, reverseTransfer, getTransactionByUserId
 } = require("../controllers/transactionController");
 
 const router = express.Router();
 
 router.use(protect);
-router.route("/").get(getAllTransactions);
+router.route("/")
+    .get(restrictUser("user"), getAllTransactions);
 
 router.route("/:id").get(getTransaction);
+router.get("/user/:id", getTransactionByUserId);
 
 router.route("/deposit").post(deposit);
 router.post("/withdrawal", withdrawal);

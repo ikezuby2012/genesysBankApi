@@ -3,6 +3,7 @@ const User = require("../models/userModel");
 const AppError = require("../utils/AppError");
 const catchAsync = require("../utils/catchAsync");
 const APIFeatures = require("../utils/apiFeatures");
+const mongoose = require("mongoose");
 
 exports.getAllTransactions = catchAsync(async (req, res, next) => {
     const features = new APIFeatures(Transaction.find(), req.query).filter().sort().limitFields().paginate();
@@ -27,6 +28,32 @@ exports.getTransaction = catchAsync(async (req, res, next) => {
     res.status(200).json({
         status: "success",
         data: transaction
+    })
+});
+
+exports.getTransactionByUserId = catchAsync(async (req, res, next) => {
+    const { id } = req.params;
+
+    const data = await Transaction.aggregate([
+        {
+            $match: {
+                "user": mongoose.Types.ObjectId(id)
+            }
+        },
+        {
+            $sort: {
+                created_at: -1
+            }
+        }
+    ]);
+
+    if (!data) {
+        return next(new AppError("could not fetch data!", 401));
+    }
+
+    res.status(200).json({
+        status: "success",
+        data
     })
 });
 
