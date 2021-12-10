@@ -86,7 +86,7 @@ exports.deposit = catchAsync(async (req, res, next) => {
     //done
     res.status(200).json({
         status: "success",
-        data: checkUser
+        data: transaction
     });
 });
 
@@ -124,7 +124,7 @@ exports.withdrawal = catchAsync(async (req, res, next) => {
     //done
     res.status(200).json({
         status: "success",
-        data: checkUser
+        data: transaction
     });
 });
 
