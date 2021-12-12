@@ -6,7 +6,8 @@ const APIFeatures = require("../utils/apiFeatures");
 const mongoose = require("mongoose");
 
 exports.getAllTransactions = catchAsync(async (req, res, next) => {
-    const features = new APIFeatures(Transaction.find(), req.query).filter().sort().limitFields().paginate();
+    const features = new APIFeatures(Transaction.find(), req.query)
+        .filter().sort().limitFields().paginate();
     const transactions = await features.query;
 
     res.status(200).json({
@@ -69,11 +70,12 @@ exports.deposit = catchAsync(async (req, res, next) => {
         return next(new AppError("deposit failed", 403));
     }
     const checkUser = await User.findOne({ _id: user });
-    const balance = checkUser.current_balance;
-    // console.log(balance);
     if (!checkUser) {
         return next(new AppError("user does not exist", 401));
     }
+    const balance = checkUser.current_balance;
+    // console.log(balance);
+    
 
     //save transaction
     const transaction = await Transaction.create({
@@ -110,10 +112,11 @@ exports.withdrawal = catchAsync(async (req, res, next) => {
         return next(new AppError("insufficient fund", 403));
     }
     const checkUser = await User.findOne({ _id: user });
-    const balance = checkUser.current_balance;
     if (!checkUser) {
         return next(new AppError("user does not exist", 401));
     }
+    const balance = checkUser.current_balance;
+    
     //save transaction
     const transaction = await Transaction.create({
         user,
